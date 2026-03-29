@@ -1,0 +1,47 @@
+name: Deploy Next.js to Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      
+      - name: Install latest npm to prevent lockfile issues
+        run: npm install -g npm@latest
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Next.js
+        run: npm run build
+        env:
+          # Variabel .env untuk terhubung ke API Back-End. Nanti diisi di Secrets GitHub.
+          NEXT_PUBLIC_API_URL: ${{ secrets.API_STAGING_URL }}
+
+      - name: Prepare Standalone Package
+        run: |
+          mkdir -p out_standalone
+          cp -r .next/standalone/* out_standalone/
+          cp -r .next/static out_standalone/.next/
+          cp -r public out_standalone/
+
+      - name: FTP Deploy to cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_STAGING_USER }}
+          password: ${{ secrets.FTP_STAGING_PASSWORD }}
+          local-dir: ./out_standalone/
+          server-dir: /
