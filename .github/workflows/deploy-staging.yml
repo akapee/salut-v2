@@ -44,4 +44,4 @@ jobs:
           username: ${{ secrets.FTP_STAGING_USER }}
           password: ${{ secrets.FTP_STAGING_PASSWORD }}
           local-dir: ./out_standalone/
-          server-dir: /
+          server-dir: /home/salutper/staging.salutlentera.id/

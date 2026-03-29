@@ -44,4 +44,4 @@ jobs:
           username: ${{ secrets.FTP_PRODUCTION_USER }}
           password: ${{ secrets.FTP_PRODUCTION_PASSWORD }}
           local-dir: ./out_standalone/
-          server-dir: /
+          server-dir: /home/salutper/public_html/
