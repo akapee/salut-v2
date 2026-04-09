@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
+import { supabase } from "../../../lib/supabase"; // Import client supabase
 import { FaUserShield, FaSpinner, FaArrowRight, FaLock } from "react-icons/fa6";
 
 export default function AdminLogin() {
@@ -18,38 +18,26 @@ export default function AdminLogin() {
     setErrorMsg("");
 
     try {
-      // Menembak endpoint otentikasi API Laravel
-      const API_URL = "http://127.0.0.1:8000/api/login";
-      
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({ email, password })
+      // Autentikasi menggunakan Supabase Auth
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Email atau kata sandi tidak cocok.");
+      if (error) {
+        throw new Error(error.message || "Email atau kata sandi tidak cocok.");
       }
 
-      if (data.token) {
-        // Simpan token otentikasi di browser cookie. 
-        // Masa aktif diset 1 hari (bisa diatur sesuai kebutuhan).
-        Cookies.set("auth_token", data.token, { expires: 1, path: '/' });
-        
-        // Pindah otomatis ke Dashboard Events
-        router.push("/admin/events");
+      if (data.session) {
+        // Pindah otomatis ke Dashboard Sentral
+        router.push("/admin");
       } else {
-        throw new Error("Server tidak mengembalikan token akses keamanan.");
+        throw new Error("Sesi tidak ditemukan setelah login.");
       }
 
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.message || "Gagal menghubungi server API autentikasi.");
+      setErrorMsg(err.message || "Gagal menghubungi server autentikasi.");
     } finally {
       setIsLoading(false);
     }
