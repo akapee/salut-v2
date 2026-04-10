@@ -16,7 +16,7 @@ export default function CTA() {
 
           <div className="text-left">
             <Link
-              href="/apply"
+              href="/pendaftaran"
               className="inline-flex items-center justify-center px-8 py-3 bg-[#fbbf24] text-slate-900 text-sm md:text-base font-bold rounded-lg hover:bg-yellow-400 transition-colors shadow-md"
             >
               Daftar Sekarang
