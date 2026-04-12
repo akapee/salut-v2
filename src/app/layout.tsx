@@ -14,7 +14,7 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Salut Campus | Modern Educational Platform",
+  title: "Salut Lentera | Universitas Terbuka",
   description: "Learn, grow, and succeed with our world-class faculties and modern learning platform.",
 };
 
