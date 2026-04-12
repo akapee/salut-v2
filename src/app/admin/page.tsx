@@ -13,11 +13,36 @@ import {
 export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"events" | "team">("events");
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+
+  // Auth Guard: Cek sesi login saat halaman pertama kali dimuat
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        // Belum login — tendang ke halaman login
+        router.replace("/admin/login");
+      } else {
+        setIsAuthChecking(false);
+      }
+    };
+    checkSession();
+  }, [router]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/admin/login");
   };
+
+  // Tampilkan loading screen saat mengecek status autentikasi
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center flex-col gap-4">
+        <FaSpinner className="w-10 h-10 animate-spin text-[#1864FF]" />
+        <p className="text-slate-600 font-bold">Memverifikasi akses admin...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex overflow-hidden font-sans">
