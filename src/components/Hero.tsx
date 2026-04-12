@@ -68,7 +68,7 @@ export default function Hero() {
 
         {/* Call to Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-          <Link href="/apply" className="w-full sm:w-auto inline-flex items-center justify-center px-10 py-4 rounded-xl bg-primary text-white font-semibold hover:bg-primary-light transition-colors shadow-sm text-base">
+          <Link href="/pendaftaran" className="w-full sm:w-auto inline-flex items-center justify-center px-10 py-4 rounded-xl bg-primary text-white font-semibold hover:bg-primary-light transition-colors shadow-sm text-base">
             Daftar Sekarang
           </Link>
           <button className="w-full sm:w-auto inline-flex items-center justify-center px-10 py-4 rounded-xl bg-white border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-colors shadow-sm text-base">

@@ -5,9 +5,23 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { FaUserPlus, FaArrowRight, FaArrowLeft, FaCheck, FaGraduationCap, FaSpinner } from "react-icons/fa6";
 
+const PROGRAMS = [
+  "S1 - Ekonomi Pembangunan", "S1 - Ekonomi Syariah", "S1 - Akuntansi", "S1 - Akuntansi Keuangan Publik", "S1 - Manajemen", "S1 - Pariwisata", "S1 - Kewirausahaan",
+  "S1 - Matematika", "S1 - Statistika", "S1 - Biologi", "S1 - Teknologi Pangan", "S1 - Perencanaan Wilayah dan Kota", "S1 - Sistem Informasi", "S1 - Agribisnis", "S1 - Sains Data",
+  "S1 - Pendidikan Bahasa dan Sastra Indonesia", "S1 - Pendidikan Bahasa Inggris", "S1 - Pendidikan Matematika", "S1 - Pendidikan Biologi", "S1 - Pendidikan Fisika", "S1 - Pendidikan Kimia", "S1 - Pendidikan Ekonomi", "S1 - Pendidikan Teknologi", "S1 - Pendidikan Agama Islam", "S1 - Pendidikan Guru Sekolah Dasar (PGSD)", "S1 - Pendidikan Guru Anak Usia Dini (PGPAUD)", "S1 - Pendidikan Pancasila dan Kewarganegaraan",
+  "S1 - Ilmu Administrasi Negara", "S1 - Ilmu Administrasi Bisnis", "S1 - Ilmu Pemerintahan", "S1 - Sosiologi", "S1 - Sastra Inggris Bid. Penerjemah", "S1 - Hukum", "S1 - Ilmu Komunikasi", "S1 - Ilmu Perpustakaan", "S1 - Perpajakan", "D3 - Perpajakan"
+];
+
 export default function ApplyPage() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+
+  // Custom Combo-box States
+  const [prodiSearch, setProdiSearch] = useState("");
+  const [isProdiOpen, setIsProdiOpen] = useState(false);
+  const filteredPrograms = PROGRAMS.filter(p => p.toLowerCase().includes(prodiSearch.toLowerCase()));
+
   const [formData, setFormData] = useState({
     // Step 1
     namaLengkap: "",
@@ -65,7 +79,8 @@ export default function ApplyPage() {
       const result = await res.json();
 
       if (result.result === "success") {
-        alert("Pendaftaran Berhasil Dikirim! Data Anda telah terdata di Google Sheets kami. Tim dari Salut Lentera akan segera menghubungi nomor WhatsApp Anda.");
+        // Tampilkan Popup Modal menggantikan alert() kuno
+        setIsSuccessModalOpen(true);
 
         // Reset formulir sampai bersih 
         setFormData({
@@ -77,7 +92,6 @@ export default function ApplyPage() {
 
         // Kembalikan ke step paling awal
         setStep(1);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         throw new Error("Gagalan simpan data di sisi server Google.");
       }
@@ -138,27 +152,72 @@ export default function ApplyPage() {
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap <span className="text-red-500">*</span></label>
-                      <input required type="text" name="namaLengkap" value={formData.namaLengkap} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium" placeholder="Budi Santoso" />
+                      <input required type="text" name="namaLengkap" value={formData.namaLengkap} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium" placeholder="Nama Lengkap Anda" />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Alamat Email Aktif <span className="text-red-500">*</span></label>
-                      <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium" placeholder="budi@gmail.com" />
+                      <label className="block text-sm font-bold text-slate-700 mb-2">Email Aktif <span className="text-red-500">*</span></label>
+                      <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium" placeholder="Masukkan Email Anda" />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Nomor WhatsApp Aktif <span className="text-red-500">*</span></label>
-                      <input required type="tel" name="whatsapp" value={formData.whatsapp} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium" placeholder="081234567890" />
+                      <label className="block text-sm font-bold text-slate-700 mb-2">Nomor WhatsApp<span className="text-red-500">*</span></label>
+                      <input required type="tel" name="whatsapp" value={formData.whatsapp} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium" placeholder="Masukkan No. Whatsapp" />
                     </div>
-                    <div>
+                    <div className="relative">
                       <label className="block text-sm font-bold text-slate-700 mb-2">Program Studi Tujuan <span className="text-red-500">*</span></label>
-                      <select required name="programStudi" value={formData.programStudi} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium text-slate-700">
-                        <option value="">-- Pilih Program Studi --</option>
-                        <option value="S1 Manajemen">S1 Manajemen</option>
-                        <option value="S1 Akuntansi">S1 Akuntansi</option>
-                        <option value="S1 PGSD">S1 PGSD</option>
-                        <option value="S1 Ilmu Hukum">S1 Ilmu Hukum</option>
-                        <option value="S1 Sistem Informasi">S1 Sistem Informasi</option>
-                        <option value="S1 Ilmu Komunikasi">S1 Ilmu Komunikasi</option>
-                      </select>
+
+                      {/* Input Cerdas / Combobox */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          required={!formData.programStudi}
+                          placeholder={formData.programStudi || "Ketik nama program studi..."}
+                          value={isProdiOpen ? prodiSearch : formData.programStudi}
+                          onChange={(e) => {
+                            setProdiSearch(e.target.value);
+                            if (!isProdiOpen) setIsProdiOpen(true);
+                            // Jika mengetik sesuatu, batalkan pilihan sebelumnya yang tersimpan di form
+                            if (formData.programStudi) setFormData({ ...formData, programStudi: "" });
+                          }}
+                          onClick={() => {
+                            setIsProdiOpen(true);
+                            setProdiSearch("");
+                          }}
+                          className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium text-slate-800 placeholder-slate-400"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setIsProdiOpen(!isProdiOpen)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1864FF] transition-colors"
+                        >
+                          ▼
+                        </button>
+                      </div>
+
+                      {/* Dropdown Menu Mengambang */}
+                      {isProdiOpen && (
+                        <>
+                          {/* Background transparan untuk mendeteksi klik di luar menu */}
+                          <div className="fixed inset-0 z-30" onClick={() => setIsProdiOpen(false)}></div>
+
+                          <div className="absolute z-40 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-60 overflow-y-auto divide-y divide-gray-50">
+                            {filteredPrograms.length > 0 ? filteredPrograms.map(p => (
+                              <div
+                                key={p}
+                                className="px-5 py-3.5 hover:bg-blue-50 cursor-pointer font-medium text-slate-700 hover:text-[#1864FF] transition-colors"
+                                onClick={() => {
+                                  setFormData({ ...formData, programStudi: p });
+                                  setProdiSearch(""); // Reset pencarian
+                                  setIsProdiOpen(false); // Tutup popup
+                                }}
+                              >
+                                {p}
+                              </div>
+                            )) : (
+                              <div className="px-5 py-4 text-slate-500 italic text-center"> Program studi tidak ditemukan. Silakan periksa ulang namanya.</div>
+                            )}
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Jalur Program <span className="text-red-500">*</span></label>
@@ -182,12 +241,12 @@ export default function ApplyPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Alamat Lengkap Pengiriman Modul (Buku Materi Pokok) <span className="text-red-500">*</span></label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Alamat Lengkap Untuk Pengiriman Modul <span className="text-red-500">*</span></label>
                     <textarea required name="alamatModul" value={formData.alamatModul} onChange={handleChange} rows={3} className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all resize-none font-medium text-slate-700 leading-relaxed" placeholder="Contoh: Jl. Merdeka No. 10, RT 01/02, Mrebet, Purbalingga, Jawa Tengah 53391..."></textarea>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Alamat Domisili (Untuk Sinkronisasi Lokasi Ujian/UAS) <span className="text-red-500">*</span></label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Alamat Domisili (Untuk Lokasi Ujian) <span className="text-red-500">*</span></label>
                     <textarea required name="alamatDomisili" value={formData.alamatDomisili} onChange={handleChange} rows={2} className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all resize-none font-medium text-slate-700 leading-relaxed" placeholder="Tuliskan tempat tinggal Anda saat ini (kos/kontrakan) atau ketik 'Sama dengan alamat pengiriman modul'"></textarea>
                   </div>
 
@@ -214,7 +273,7 @@ export default function ApplyPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Nama Ibu Kandung <span className="text-red-500">*</span></label>
-                      <input required type="text" name="namaIbu" value={formData.namaIbu} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium" placeholder="Sesuai dokumen resmi Akta/KK" />
+                      <input required type="text" name="namaIbu" value={formData.namaIbu} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium" placeholder="Nama Ibu kandung" />
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Nomor Induk Kependudukan (16 Digit NIK) <span className="text-red-500">*</span></label>
@@ -270,6 +329,43 @@ export default function ApplyPage() {
             </div>
           </div>
         </div>
+
+        {/* =========================================
+            MODAL POPUP BERHASIL DAFTAR 
+            ========================================= */}
+        {isSuccessModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            {/* Backdrop Blur Gelap */}
+            <div
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300"
+              onClick={() => setIsSuccessModalOpen(false)}
+            />
+
+            {/* Kotak Modal */}
+            <div className="bg-white max-w-md w-full rounded-[2rem] shadow-2xl relative z-10 p-8 text-center animate-in zoom-in-95 duration-300">
+              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FaCheck className="w-10 h-10 text-green-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800 mb-4 font-serif">Selamat! Formulir Sukses Terkirim</h2>
+              <p className="text-slate-600 mb-8 font-medium leading-relaxed">
+                Data Anda telah aman dikirim dan tercatat dalam sistem pendaftaran Universitas Terbuka kami.
+                <br /><br />
+                Pihak administrasi <strong>Salut Lentera</strong> akan segera memverifikasi dan menghubungi Anda melalui nomor WhatsApp yang telah Anda cantumkan.
+              </p>
+
+              <button
+                onClick={() => {
+                  setIsSuccessModalOpen(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full py-4 px-6 bg-[#1864FF] text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-md hover:-translate-y-1 inline-flex justify-center items-center gap-3 group"
+              >
+                Kembali ke Form <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        )}
+
       </main>
       <Footer />
     </>
