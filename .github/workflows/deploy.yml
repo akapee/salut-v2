@@ -1,0 +1,63 @@
+name: Auto Deploy Next.js to cPanel
+
+on:
+  push:
+    branches:
+      - main # Workflow akan berjalan otomatis saat terjadi push di branch 'main'
+
+jobs:
+  build-and-deploy:
+    name: 🚀 Build & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Cek Kode Sumber (Checkout)
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js (Versi 20 LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Mengunduh Dependensi
+        run: npm ci
+
+      - name: 🏗️ Melakukan Build (Generate Standalone)
+        run: npm run build
+        env:
+          # Membawa kunci rahasia dari Github Secrets agar web bisa terkoneksi ke API di mode Server
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: 📁 Merakit Paket Produksi (Siap Upload)
+        run: |
+          mkdir deploy_package
+          
+          # Memindahkan file server.js and node_modules yang dibutuhkan saja
+          cp -r .next/standalone/. deploy_package/
+          
+          # Menambahkan folder gambar publik (sangat wajib)
+          cp -r public deploy_package/
+          
+          # Menggabungkan komponen statis CSS & JS React ke dalam struktur standalone
+          mkdir -p deploy_package/.next/static
+          cp -r .next/static/. deploy_package/.next/static/
+          
+          # Membuat file restart otomatis untuk Node.js CPanel App (Passenger)
+          mkdir -p deploy_package/tmp
+          touch deploy_package/tmp/restart.txt
+
+      - name: 📤 Mendistribusikan ke Server cPanel (Lewat FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp 
+          port: 21
+          # Target Folder lokal yang baru dipaketkan
+          local-dir: ./deploy_package/
+          # Path di dalam Shared Hosting Anda (Misal: root aplikasi nya bernama 'salutlentera_app')
+          # BISA DIUBAH SESUAI KEBUTUHAN ANDA:
+          server-dir: /salutlentera_app/

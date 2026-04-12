@@ -7,22 +7,26 @@ import { notFound } from "next/navigation";
 // Mencegah cache statis Next.js agar selalu segar dari API Realtime
 export const dynamic = 'force-dynamic';
 
+import { supabase } from "../../../lib/supabase";
+
 // Fungsi Fetch Server untuk menarik 1 data spesifik berdasar ID
 async function getEventDetails(id: string) {
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/events/${id}`, {
-      cache: 'no-store'
-    });
-    
-    // Jika event dihapus atau tidak ditemukan, kembalikan null untuk trigger halaman 404
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error(`API Error: ${res.status}`);
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', id)
+      .single();
+      
+    if (error) {
+      // Jika event tidak ditemukan, kembalikan null untuk trigger halaman 404
+      if (error.code === 'PGRST116') return null; 
+      throw new Error(`Supabase Error: ${error.message}`);
     }
     
-    return await res.json();
+    return data;
   } catch (error) {
-    console.error("Gagal menarik detail event:", error);
+    console.error("Gagal menarik detail event dari Supabase:", error);
     return null;
   }
 }

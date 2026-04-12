@@ -3,8 +3,8 @@ import { FaBars as Menu } from "react-icons/fa6";
 
 export default function Navbar() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 py-4">
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-20">
+    <header className="fixed top-4 left-0 right-0 z-50 w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-7xl mx-auto bg-white/70 backdrop-blur-md shadow-lg border border-white/50 rounded-2xl transition-all duration-300">
+      <div className="px-6 lg:px-8 flex items-center justify-between h-20 xl:px-10">
         <Link href="/" className="flex items-center group">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

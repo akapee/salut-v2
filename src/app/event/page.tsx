@@ -11,31 +11,34 @@ export const metadata = {
 // Konfigurasi Next.js untuk mencegah cache statis agar data selalu ter-update (real-time).
 export const dynamic = 'force-dynamic';
 
-// Fungsi Fetching Server-Side (Langsung di-compile di server sebelum dikirim ke Browser)
-async function fetchEventsFromLaravel() {
+import { supabase } from "../../lib/supabase";
+
+// Fungsi Fetching Server-Side dari Supabase
+async function fetchEventsFromSupabase() {
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/events", {
-      cache: 'no-store' // Memastikan tidak ada caching HTTP
-    });
-    
-    if (!res.ok) {
-      console.warn("API Laravel merespons dengan error.");
+    // Karena kita tidak memakai cache fetch Next.js, 
+    // Supabase JS SDK by default melakukan route fetch dinamis jika diletakkan di komponen dengan 'force-dynamic'
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('status', 'Published')
+      .order('id', { ascending: false });
+      
+    if (error) {
+      console.warn("Supabase API merespons dengan error:", error.message);
       return [];
     }
     
-    return await res.json();
+    return data || [];
   } catch (error) {
-    console.error("Gagal terhubung ke Laravel:", error);
-    return []; // Kembalikan array kosong jika server mati
+    console.error("Gagal terhubung ke Supabase:", error);
+    return []; // Kembalikan array kosong jika gagal
   }
 }
 
 export default async function EventPage() {
-  // Mengeksekusi penarikan data dari database melalui API
-  const allEvents = await fetchEventsFromLaravel();
-  
-  // Filter khusus untuk hanya menampilkan acara yang berstatus "Published" (Terbit Secara Publik)
-  const publishedEvents = allEvents.filter((event: any) => event.status === "Published");
+  // Mengeksekusi penarikan data dari database Supabase
+  const publishedEvents = await fetchEventsFromSupabase();
 
   return (
     <>

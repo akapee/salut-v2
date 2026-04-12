@@ -64,14 +64,11 @@ export default function ApplyPage() {
     setIsSubmitting(true);
 
     try {
-      // Endpoint Apps Script (Spreadsheet)
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykMuKmLDFMjaXchenjjlHk4W30FbFLHQ-cMY9iyR9DlbH-P_GLC_mXqTBK2qAbxnI/exec";
-
-      const res = await fetch(SCRIPT_URL, {
+      // Endpoint Internal API (URL Proxy agar request script Google di-handle oleh server backend Next.js)
+      const res = await fetch("/api/apply", {
         method: "POST",
-        // Mode text/plain digunakan khusus untuk mengelabui (bypass) blokir CORS Google
         headers: {
-          "Content-Type": "text/plain;charset=utf-8",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData)
       });
