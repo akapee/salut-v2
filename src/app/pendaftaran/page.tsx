@@ -220,8 +220,8 @@ export default function ApplyPage() {
                       <label className="block text-sm font-bold text-slate-700 mb-2">Jalur Program <span className="text-red-500">*</span></label>
                       <select required name="jalurProgram" value={formData.jalurProgram} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1864FF]/50 focus:border-[#1864FF] transition-all font-medium text-slate-700">
                         <option value="">-- Pilih Jalur --</option>
-                        <option value="SIPAS (Sistem Paket Semester)">RPL</option>
-                        <option value="NON-SIPAS">NON RPL</option>
+                        <option value="RPL">RPL</option>
+                        <option value="NON RPL">NON RPL</option>
                       </select>
                     </div>
                     <div>
