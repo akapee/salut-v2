@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     
     // URL Endpoint App Script (Aman karena dijalankan di sisi server, tidak bisa di-inspect)
-    const SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbykMuKmLDFMjaXchenjjlHk4W30FbFLHQ-cMY9iyR9DlbH-P_GLC_mXqTBK2qAbxnI/exec";
+    const SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbzVphQEeHP26dyCPVVfXfxag5HWY5HQ_Ss5P_r09qCuXoGKMUuzhXd3jlHN79RlSzMF/exec";
 
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
